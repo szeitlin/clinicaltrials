@@ -6,8 +6,8 @@ from Authentication import Authentication
 class TestAuthentication(unittest.TestCase):
 
     def setUp(cls):
-        #have to pass in apikey
-        cls.base = Authentication(apikey)
+        #have to pass in apikey from local environment variable
+        cls.base = Authentication()
 
     def test_init(self):
         self.assertEqual(self.base.service, "http://umlsks.nlm.nih.gov")
@@ -16,9 +16,10 @@ class TestAuthentication(unittest.TestCase):
         self.base.gettgt()
         self.assertTrue(isinstance(self.base.tgt, str))
 
-    def test_get_string(self):
+    def test_get_service_ticket(self):
         self.base.getst()
         self.assertTrue(isinstance(self.base.st, str))
+
 
 class TestRestQuery(unittest.TestCase):
 

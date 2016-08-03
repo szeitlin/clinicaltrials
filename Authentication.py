@@ -6,7 +6,7 @@
 
 import requests
 from pyquery import PyQuery as pq
-from lxml import etree
+import os
 
 uri="https://utslogin.nlm.nih.gov"
 #option 1 - username/pw authentication at /cas/v1/tickets
@@ -14,10 +14,12 @@ uri="https://utslogin.nlm.nih.gov"
 #option 2 - api key authentication at /cas/v1/api-key
 auth_endpoint = "/cas/v1/api-key"
 
+#to save apikey locally, do `export APIKEY="apikeytexthere"`
+
 class Authentication:
 
-    def __init__(self, apikey):
-        self.apikey=apikey
+    def __init__(self):
+        self.apikey=os.environ.get("APIKEY")
         self.service="http://umlsks.nlm.nih.gov"
 
     def gettgt(self):
@@ -38,11 +40,17 @@ class Authentication:
 
         self.tgt = d.find('form').attr('action')
 
-
     def getst(self):
+        """
+        requires a ticket-granting ticket
 
+        :return: st (service ticket)
+
+        """
+        self.tgt = self.gettgt()
         params = {'service': self.service}
         h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python" }
-        r = requests.post(self.tgt,data=params,headers=h)
+        r = requests.post(self.tgt, data=params, headers=h)
+        print(r)
         self.st = r.text
 
