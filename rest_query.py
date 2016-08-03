@@ -7,10 +7,11 @@
 # known UMLS CUI
 #################################################################################################
 
-from Authentication import *
+from Authentication import Authentication
 import requests
 import json
 import argparse
+
 
 parser = argparse.ArgumentParser(description='process user given parameters')
 #parser.add_argument("-u", "--username", required =  True, dest="username", help = "enter username")
