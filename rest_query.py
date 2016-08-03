@@ -12,112 +12,117 @@ import requests
 import json
 import argparse
 
+class CLI:
 
-parser = argparse.ArgumentParser(description='process user given parameters')
-#parser.add_argument("-u", "--username", required =  True, dest="username", help = "enter username")
-#parser.add_argument("-p", "--password", required =  True, dest="password", help = "enter passowrd")
-parser.add_argument("-k", "--apikey", required = True, dest = "apikey", help = "enter api key from your UTS Profile")
-parser.add_argument("-v", "--version", required =  False, dest="version", default = "current", help = "enter version example-2015AA")
-parser.add_argument("-i", "--identifier", required =  True, dest="identifier", help = "enter identifier example-C0018787")
-parser.add_argument("-s", "--source", required =  False, dest="source", help = "enter source name if known")
+    def __init__(self):
+        self.parser = argparse.ArgumentParser(description='process user given parameters')
+        #parser.add_argument("-u", "--username", required =  True, dest="username", help = "enter username")
+        #parser.add_argument("-p", "--password", required =  True, dest="password", help = "enter passowrd")
+        self.parser.add_argument("-k", "--apikey", required = True, dest = "apikey", help = "enter api key from your UTS Profile")
+        self.parser.add_argument("-v", "--version", required =  False, dest="version", default = "current", help = "enter version example-2015AA")
+        self.parser.add_argument("-i", "--identifier", required =  True, dest="identifier", help = "enter identifier example-C0018787")
+        self.parser.add_argument("-s", "--source", required =  False, dest="source", help = "enter source name if known")
 
-args = parser.parse_args()
+        self.args = self.parser.parse_args()
 
-#username = args.username
-#password = args.password
-apikey = args.apikey
-version = args.version
-identifier = args.identifier
-source = args.source
-AuthClient = Authentication(apikey)
+    def cli_authenticate(self):
 
-###################################
-#get TGT for our session
-###################################
+        #username = args.username
+        #password = args.password
 
-tgt = AuthClient.gettgt()
-uri = "https://uts-ws.nlm.nih.gov"
+        self.AuthClient = Authentication(self.args.apikey)
 
-try:
-   source
-except NameError:
-   source = None
+    def construct_query(self):
 
-##if we don't specify a source vocabulary, assume we're retrieving UMLS CUIs
-if source is None:
-    content_endpoint = "/rest/content/"+str(version)+"/CUI/"+str(identifier)
+        self.version = self.args.version
+        self.identifier = self.args.identifier
+        self.source = self.args.source
+        self.tgt = self.AuthClient.gettgt()
 
-else:
-    content_endpoint = "/rest/content/"+str(version)+"/source/"+str(source)+"/"+str(identifier)
+        uri = "https://uts-ws.nlm.nih.gov"
 
-##ticket is the only parameter needed for this call - paging does not come into play because we're only asking for one Json object
-query = {'ticket':AuthClient.getst(tgt)}
-r = requests.get(uri+content_endpoint,params=query)
-r.encoding = 'utf-8'
-items  = json.loads(r.text)
-jsonData = items["result"]
+        try:
+           source
+        except NameError:
+           source = None
 
-##uncomment the print statment if you want the raw json output, or you can just look at the documentation :=)
-#https://documentation.uts.nlm.nih.gov/rest/concept/index.html#sample-output
-#https://documentation.uts.nlm.nih.gov/rest/source-asserted-identifiers/index.html#sample-output
-#print (json.dumps(items, indent = 4))
+        ##if we don't specify a source vocabulary, assume we're retrieving UMLS CUIs
+        if source is None:
+            content_endpoint = "/rest/content/"+str(self.version)+"/CUI/"+str(self.identifier)
 
-############################
-### Print out fields ####
+        else:
+            content_endpoint = "/rest/content/"+str(self.version)+"/source/"+str(self.source)+"/"+str(self.identifier)
 
-classType = jsonData["classType"]
-name = jsonData["name"]
-ui = jsonData["ui"]
-AtomCount = jsonData["atomCount"]
-Definitions = jsonData["definitions"]
-Atoms = jsonData["atoms"]
-DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
+        ##ticket is the only parameter needed for this call - paging does not come into play because we're only asking for one Json object
+        self.query = {'ticket':AuthClient.getst(self.tgt)}
 
-## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
-print ("classType: " + classType)
-print ("ui: " + ui)
-print ("Name: " + name)
-print ("AtomCount: " + str(AtomCount))
-print ("Atoms: " + Atoms)
-print ("Default Preferred Atom: " + DefaultPreferredAtom)
+    def get_query_result(self):
 
-## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
-try:
-   jsonData["definitions"]
-   print ("definitions: " + jsonData["definitions"])
-except:
-      pass
+        r = requests.get(uri+content_endpoint,params=self.query)
+        r.encoding = 'utf-8'
+        items = json.loads(r.text)
+        self.jsonData = items["result"]
 
-try:
-   jsonData["parents"]
-   print ("parents: " + jsonData["parents"])
-except:
-      pass
+        ##uncomment the print statment if you want the raw json output, or you can just look at the documentation :=)
+        #https://documentation.uts.nlm.nih.gov/rest/concept/index.html#sample-output
+        #https://documentation.uts.nlm.nih.gov/rest/source-asserted-identifiers/index.html#sample-output
+        #print (json.dumps(items, indent = 4))
 
-try:
-   jsonData["children"]
-   print ("children: " + jsonData["children"])
-except:
-      pass
+    def parse_query_result(self):
 
-try:
-   jsonData["relations"]
-   print ("relations: " + jsonData["relations"])
-except:
-      pass
+        classType = self.jsonData["classType"]
+        name = jsonData["name"]
+        ui = jsonData["ui"]
+        AtomCount = jsonData["atomCount"]
+        Definitions = jsonData["definitions"]
+        Atoms = jsonData["atoms"]
+        DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
 
-try:
-   jsonData["descendants"]
-   print ("descendants: " + jsonData["descendants"])
-except:
-      pass
+        ## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
+        print ("classType: " + classType)
+        print ("ui: " + ui)
+        print ("Name: " + name)
+        print ("AtomCount: " + str(AtomCount))
+        print ("Atoms: " + Atoms)
+        print ("Default Preferred Atom: " + DefaultPreferredAtom)
 
-try:
-   jsonData["semanticTypes"]
-   print("Semantic Types:")
-   for stys in jsonData["semanticTypes"]:
-       print("uri: "+ stys["uri"])
-       print("name: "+ stys["name"])
-      
-except:
-      pass
+        ## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
+        try:
+           jsonData["definitions"]
+           print ("definitions: " + jsonData["definitions"])
+        except:
+              pass
+
+        try:
+           jsonData["parents"]
+           print ("parents: " + jsonData["parents"])
+        except:
+              pass
+
+        try:
+           jsonData["children"]
+           print ("children: " + jsonData["children"])
+        except:
+              pass
+
+        try:
+           jsonData["relations"]
+           print ("relations: " + jsonData["relations"])
+        except:
+              pass
+
+        try:
+           jsonData["descendants"]
+           print ("descendants: " + jsonData["descendants"])
+        except:
+              pass
+
+        try:
+           jsonData["semanticTypes"]
+           print("Semantic Types:")
+           for stys in jsonData["semanticTypes"]:
+               print("uri: "+ stys["uri"])
+               print("name: "+ stys["name"])
+
+        except:
+              pass
