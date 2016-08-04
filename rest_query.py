@@ -73,8 +73,8 @@ class CLI:
         self.query = {'ticket':self.AuthClient.getst()}
 
         r = requests.get(uri+content_endpoint,params=self.query)
-        print(r)
-        
+        print(r.text)
+
         r.encoding = 'utf-8'
 
         items = json.loads(r.text)

@@ -54,6 +54,6 @@ class Authentication:
         params = {'service': self.service}
         h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python"}
         r = requests.post(self.tgt, data=params, headers=h)
-        #print(r)
-        self.st = r.text
+
+        return r.text
 
