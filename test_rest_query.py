@@ -3,6 +3,7 @@ __author__ = 'szeitlin'
 import unittest
 from Authentication import Authentication
 from rest_query import CLI
+from argparse import Namespace
 
 class TestAuthentication(unittest.TestCase):
 
@@ -26,17 +27,23 @@ class TestAuthentication(unittest.TestCase):
 class TestRestQueryCLI(unittest.TestCase):
 
     def setUp(cls):
-        cls.cli = CLI()
+        argv = '-i renal -s MEDLINEPLUS'.split()
+        cls.cli = CLI(argv)
 
     def test_argument_parsing(self):
-        self.assertTrue(isinstance(self.cli.args, list))
+        self.assertTrue(isinstance(self.cli.args, Namespace))
 
     def test_authclient_initialization(self):
         self.cli.cli_authenticate()
         self.assertEqual(self.cli.AuthClient.service, "http://umlsks.nlm.nih.gov")
 
     def test_construct_query(self):
-        pass
+        self.cli.version = 'current'
+        self.cli.identifier = 'renal'
+        self.cli.source = 'MEDLINEPLUS'
+        self.cli.cli_authenticate()
+        self.query = {'ticket':self.cli.AuthClient.getst()}
+        self.assertTrue(isinstance(self.query, str))
 
 
 if __name__=='__main__':

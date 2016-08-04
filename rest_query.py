@@ -11,26 +11,39 @@ from Authentication import Authentication
 import requests
 import json
 import argparse
+import os
 
 class CLI:
 
-    def __init__(self):
+    def __init__(self, argv=None):
+        """
+        :param argv: for testing purposes only
+
+        """
         self.parser = argparse.ArgumentParser(description='process user given parameters')
         #parser.add_argument("-u", "--username", required =  True, dest="username", help = "enter username")
         #parser.add_argument("-p", "--password", required =  True, dest="password", help = "enter passowrd")
-        self.parser.add_argument("-k", "--apikey", required = True, dest = "apikey", help = "enter api key from your UTS Profile")
-        self.parser.add_argument("-v", "--version", required =  False, dest="version", default = "current", help = "enter version example-2015AA")
-        self.parser.add_argument("-i", "--identifier", required =  True, dest="identifier", help = "enter identifier example-C0018787")
-        self.parser.add_argument("-s", "--source", required =  False, dest="source", help = "enter source name if known")
+        self.parser.add_argument("-k", "--apikey", required = False, dest = "apikey",
+                                 default = os.environ.get("APIKEY"),
+                                 help = "enter api key from your UTS Profile")
+        self.parser.add_argument("-v", "--version", required =  False, dest="version",
+                                 default = "current", help = "enter version example-2015AA")
+        self.parser.add_argument("-i", "--identifier", required =  True, dest="identifier",
+                                 help = "enter identifier example-C0018787")
+        self.parser.add_argument("-s", "--source", required =  False, dest="source",
+                                 help = "enter source name if known")
 
-        self.args = self.parser.parse_args()
+        if argv is not None:
+            self.args = self.parser.parse_args(argv)
+        else:
+            self.args = self.parser.parse_args()
 
     def cli_authenticate(self):
 
         #username = args.username
         #password = args.password
 
-        self.AuthClient = Authentication(self.args.apikey)
+        self.AuthClient = Authentication()
 
     def construct_query(self):
 
@@ -41,23 +54,20 @@ class CLI:
 
         uri = "https://uts-ws.nlm.nih.gov"
 
-        try:
-           source
-        except NameError:
-           source = None
-
-        ##if we don't specify a source vocabulary, assume we're retrieving UMLS CUIs
-        if source is None:
-            content_endpoint = "/rest/content/"+str(self.version)+"/CUI/"+str(self.identifier)
-
-        else:
-            content_endpoint = "/rest/content/"+str(self.version)+"/source/"+str(self.source)+"/"+str(self.identifier)
-
-        ##ticket is the only parameter needed for this call - paging does not come into play because we're only asking for one Json object
-        self.query = {'ticket':AuthClient.getst(self.tgt)}
+        # try:
+        #    source
+        # except NameError:
+        #    source = None
+        #
+        # ##if we don't specify a source vocabulary, assume we're retrieving UMLS CUIs
+        # if source is None:
+        #     content_endpoint = "/rest/content/"+str(self.version)+"/CUI/"+str(self.identifier)
 
     def get_query_result(self):
 
+        content_endpoint = "/rest/content/"+str(self.version)+\
+                               "/source/"+str(self.source)+"/"+str(self.identifier)
+        self.query = {'ticket':AuthClient.getst(self.tgt)}
         r = requests.get(uri+content_endpoint,params=self.query)
         r.encoding = 'utf-8'
         items = json.loads(r.text)
@@ -79,12 +89,12 @@ class CLI:
         DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
 
         ## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
-        print ("classType: " + classType)
-        print ("ui: " + ui)
-        print ("Name: " + name)
-        print ("AtomCount: " + str(AtomCount))
-        print ("Atoms: " + Atoms)
-        print ("Default Preferred Atom: " + DefaultPreferredAtom)
+        print("classType: " + classType)
+        print("ui: " + ui)
+        print("Name: " + name)
+        print("AtomCount: " + str(AtomCount))
+        print("Atoms: " + Atoms)
+        print("Default Preferred Atom: " + DefaultPreferredAtom)
 
         ## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
         try:
@@ -126,3 +136,8 @@ class CLI:
 
         except:
               pass
+
+
+if __name__=='__main__':
+
+    cli = CLI(argv)
