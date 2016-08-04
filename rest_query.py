@@ -50,9 +50,7 @@ class CLI:
         self.version = self.args.version
         self.identifier = self.args.identifier
         self.source = self.args.source
-        self.tgt = self.AuthClient.gettgt()
-
-        uri = "https://uts-ws.nlm.nih.gov"
+        self.AuthClient.gettgt()
 
         # try:
         #    source
@@ -65,11 +63,20 @@ class CLI:
 
     def get_query_result(self):
 
+        if self.version is None:
+            self.version = 'current'
+
+        uri = "https://uts-ws.nlm.nih.gov"
         content_endpoint = "/rest/content/"+str(self.version)+\
                                "/source/"+str(self.source)+"/"+str(self.identifier)
-        self.query = {'ticket':AuthClient.getst(self.tgt)}
+
+        self.query = {'ticket':self.AuthClient.getst()}
+
         r = requests.get(uri+content_endpoint,params=self.query)
+        print(r)
+        
         r.encoding = 'utf-8'
+
         items = json.loads(r.text)
         self.jsonData = items["result"]
 

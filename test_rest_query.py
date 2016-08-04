@@ -17,8 +17,8 @@ class TestAuthentication(unittest.TestCase):
     def test_get_ticketgrantingticket(self):
         self.base.gettgt()
         self.assertTrue(isinstance(self.base.tgt, str))
+        self.assertGreater(len(self.base.tgt), 0)
 
-    @unittest.skip("missing schema error - not sure we want to test this here")
     def test_get_service_ticket(self):
         self.base.getst()
         self.assertTrue(isinstance(self.base.st, str))
@@ -43,8 +43,13 @@ class TestRestQueryCLI(unittest.TestCase):
         self.cli.source = 'MEDLINEPLUS'
         self.cli.cli_authenticate()
         self.query = {'ticket':self.cli.AuthClient.getst()}
-        self.assertTrue(isinstance(self.query, str))
+        self.assertEqual(self.query, {'ticket': None})
 
+    def test_query_result(self):
+        self.cli.cli_authenticate()
+        self.cli.construct_query()
+        self.cli.jsonData = self.cli.get_query_result()
+        self.assertTrue(isinstance(self.cli.jsonData, str))
 
 if __name__=='__main__':
     unittest.main()

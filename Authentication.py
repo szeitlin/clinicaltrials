@@ -38,7 +38,10 @@ class Authentication:
         # looks similar to https://utslogin.nlm.nih.gov/cas/v1/tickets/TGT-36471-aYqNLN2rFIJPXKzxwdTNC5ZT7z3B3cTAKfSc5ndHQcUxeaDOLN-cas
         ## we make a POST call to this URL in the getst method
 
-        self.tgt = d.find('form').attr('action')
+        tgt = d.find('form').attr('action')
+        self.tgt = tgt
+
+        #print(self.tgt)
 
     def getst(self):
         """
@@ -47,10 +50,10 @@ class Authentication:
         :return: st (service ticket)
 
         """
-        self.tgt = self.gettgt()
+        self.gettgt()
         params = {'service': self.service}
-        h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python" }
+        h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python"}
         r = requests.post(self.tgt, data=params, headers=h)
-        print(r)
+        #print(r)
         self.st = r.text
 
