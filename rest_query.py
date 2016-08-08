@@ -68,14 +68,15 @@ class CLI:
 
         uri = "https://uts-ws.nlm.nih.gov"
         content_endpoint = "/rest/content/"+str(self.version)+\
-                               "/source/"+str(self.source)+"/"+str(self.identifier)
+                                "/source/"+str(self.source)+"/"+str(self.identifier)
+
+        #endpoint = "/rest/search/current?string={0}".format(self.identifier)
 
         self.query = {'ticket':self.AuthClient.getst()}
 
         r = requests.get(uri+content_endpoint,params=self.query)
+        #r = requests.get(uri + endpoint, params=self.query)
         print(r.text)
-
-        r.encoding = 'utf-8'
 
         items = json.loads(r.text)
         self.jsonData = items["result"]
@@ -85,66 +86,61 @@ class CLI:
         #https://documentation.uts.nlm.nih.gov/rest/source-asserted-identifiers/index.html#sample-output
         #print (json.dumps(items, indent = 4))
 
-    def parse_query_result(self):
-
-        classType = self.jsonData["classType"]
-        name = jsonData["name"]
-        ui = jsonData["ui"]
-        AtomCount = jsonData["atomCount"]
-        Definitions = jsonData["definitions"]
-        Atoms = jsonData["atoms"]
-        DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
-
-        ## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
-        print("classType: " + classType)
-        print("ui: " + ui)
-        print("Name: " + name)
-        print("AtomCount: " + str(AtomCount))
-        print("Atoms: " + Atoms)
-        print("Default Preferred Atom: " + DefaultPreferredAtom)
-
-        ## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
-        try:
-           jsonData["definitions"]
-           print ("definitions: " + jsonData["definitions"])
-        except:
-              pass
-
-        try:
-           jsonData["parents"]
-           print ("parents: " + jsonData["parents"])
-        except:
-              pass
-
-        try:
-           jsonData["children"]
-           print ("children: " + jsonData["children"])
-        except:
-              pass
-
-        try:
-           jsonData["relations"]
-           print ("relations: " + jsonData["relations"])
-        except:
-              pass
-
-        try:
-           jsonData["descendants"]
-           print ("descendants: " + jsonData["descendants"])
-        except:
-              pass
-
-        try:
-           jsonData["semanticTypes"]
-           print("Semantic Types:")
-           for stys in jsonData["semanticTypes"]:
-               print("uri: "+ stys["uri"])
-               print("name: "+ stys["name"])
-
-        except:
-              pass
+    # def parse_query_result(self):
+    #
+    #     jsonData = self.jsonData
+    #
+    #     classType = jsonData["classType"]
+    #     name = jsonData["name"]
+    #     ui = jsonData["ui"]
+    #     AtomCount = jsonData["atomCount"]
+    #     Definitions = jsonData["definitions"]
+    #     Atoms = jsonData["atoms"]
+    #     DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
+    #
+    #     ## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
+    #     print("classType: " + classType)
+    #     print("ui: " + ui)
+    #     print("Name: " + name)
+    #     print("AtomCount: " + str(AtomCount))
+    #     print("Atoms: " + Atoms)
+    #     print("Default Preferred Atom: " + DefaultPreferredAtom)
+    #
+    #     ## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
+    #     try:
+    #        print ("definitions: " + jsonData["definitions"])
+    #     except:
+    #           pass
+    #
+    #     try:
+    #        print ("parents: " + jsonData["parents"])
+    #     except:
+    #           pass
+    #
+    #     try:
+    #        print ("children: " + jsonData["children"])
+    #     except:
+    #           pass
+    #
+    #     try:
+    #        print ("relations: " + jsonData["relations"])
+    #     except:
+    #           pass
+    #
+    #     try:
+    #        print ("descendants: " + jsonData["descendants"])
+    #     except:
+    #           pass
+    #
+    #     try:
+    #        print("Semantic Types:")
+    #        for stys in jsonData["semanticTypes"]:
+    #            print("uri: "+ stys["uri"])
+    #            print("name: "+ stys["name"])
+    #
+    #     except:
+    #           pass
 
 
 if __name__=='__main__':
-
-    cli = CLI(argv)
+    cli = CLI()

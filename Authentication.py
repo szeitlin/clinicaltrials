@@ -30,7 +30,8 @@ class Authentication:
         """
 
         params = {'apikey': self.apikey}
-        h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python" }
+        h = {"Content-type": "application/x-www-form-urlencoded",
+             "Accept": "text/plain", "User-Agent":"python" }
         r = requests.post(uri+auth_endpoint,data=params,headers=h)
         d = pq(r.text)
         ## extract the entire URL needed from the HTML form (action attribute) returned

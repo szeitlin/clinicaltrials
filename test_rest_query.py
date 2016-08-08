@@ -4,6 +4,7 @@ import unittest
 from Authentication import Authentication
 from rest_query import CLI
 from argparse import Namespace
+import requests
 
 class TestAuthentication(unittest.TestCase):
 
@@ -23,11 +24,22 @@ class TestAuthentication(unittest.TestCase):
         self.base.st = self.base.getst()
         self.assertTrue(isinstance(self.base.st, str))
 
+    def test_validate_service_ticket(self):
+        self.base.st = self.base.getst()
+        uri = "http://utslogin.nlm.nih.gov"
+        endpoint = "/cas/serviceValidate?ticket={}&service={}".format(self.base.st, self.base.service)
+        params = {'apikey': self.base.apikey}
+        h = {"Content-type": "application/x-www-form-urlencoded",
+             "Accept": "text/plain", "User-Agent":"python" }
+        r = requests.post(uri + endpoint, data=params, headers = h)
+        print(uri+endpoint)
+        print(r)
+        self.assertEqual(r.text, "valid")
 
 class TestRestQueryCLI(unittest.TestCase):
 
     def setUp(cls):
-        argv = '-i renal -s MSH'.split()
+        argv = '-i idiopathic -s MEDLINEPLUS'.split()
         cls.cli = CLI(argv)
 
     def test_argument_parsing(self):
@@ -39,7 +51,7 @@ class TestRestQueryCLI(unittest.TestCase):
 
     def test_construct_query(self):
         self.cli.version = 'current'
-        self.cli.identifier = 'renal'
+        self.cli.identifier = 'cardiac'
         self.cli.source = 'MEDLINEPLUS'
         self.cli.cli_authenticate()
         self.query = {'ticket':self.cli.AuthClient.getst()}
