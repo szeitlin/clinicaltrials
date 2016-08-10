@@ -63,8 +63,7 @@ class CLI:
 
     def get_query_result(self):
 
-        if self.version is None:
-            self.version = 'current'
+        self.construct_query()
 
         uri = "https://uts-ws.nlm.nih.gov"
         content_endpoint = "/rest/content/"+str(self.version)+\

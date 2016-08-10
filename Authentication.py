@@ -21,10 +21,13 @@ class Authentication:
     def __init__(self):
         self.apikey=os.environ.get("APIKEY")
         self.service="http://umlsks.nlm.nih.gov"
+        self.gettgt()
 
     def gettgt(self):
         """
         requires an apikey
+
+        TGT can be re-used.
 
         :return: tgt (ticket-granting ticket)
         """
@@ -42,19 +45,23 @@ class Authentication:
         tgt = d.find('form').attr('action')
         self.tgt = tgt
 
-        #print(self.tgt)
+        #print(type(self.tgt))
+        #print(isinstance(self.tgt, str))
 
     def getst(self):
         """
         requires a ticket-granting ticket
 
+        Service Ticket CANNOT be re-used.
+
         :return: st (service ticket)
 
         """
-        self.gettgt()
         params = {'service': self.service}
         h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python"}
         r = requests.post(self.tgt, data=params, headers=h)
+
+        print(r.text)
 
         return r.text
 
