@@ -26,12 +26,16 @@ class CLI:
         self.parser.add_argument("-k", "--apikey", required = False, dest = "apikey",
                                  default = os.environ.get("APIKEY"),
                                  help = "enter api key from your UTS Profile")
-        self.parser.add_argument("-v", "--version", required =  False, dest="version",
+        self.parser.add_argument("-v", "--version", required = False, dest="version",
                                  default = "current", help = "enter version example-2015AA")
-        self.parser.add_argument("-i", "--identifier", required =  True, dest="identifier",
+        self.parser.add_argument("-i", "--identifier", required = True, dest="identifier",
                                  help = "enter identifier example-C0018787")
-        self.parser.add_argument("-s", "--source", required =  False, dest="source",
+        self.parser.add_argument("-s", "--source", required = False, dest="source",
                                  help = "enter source name if known")
+        self.parser.add_argument("-r", "--returntype", required = False, dest='returntype',
+                                 default = "concept",
+                                 help = "choose return type (‘aui’,‘concept’,‘code’,\
+                                        ‘sourceConcept’,‘sourceDescriptor’, ‘sourceUi’)")
 
         if argv is not None:
             self.args = self.parser.parse_args(argv)
@@ -50,6 +54,7 @@ class CLI:
         self.version = self.args.version
         self.identifier = self.args.identifier
         self.source = self.args.source
+        self.returntype = self.args.returntype
         self.AuthClient.gettgt()
 
         # try:
@@ -66,12 +71,14 @@ class CLI:
         self.construct_query()
 
         uri = "https://uts-ws.nlm.nih.gov"
-        content_endpoint = "/rest/content/"+str(self.version)+\
-                                "/source/"+str(self.source)+"/"+str(self.identifier)
+        content_endpoint = "/rest/search/{0}?string={1}&sabs={2}&returnIdType={3}".format(
+                           self.version, self.identifier, self.source, self.returntype)
 
         #endpoint = "/rest/search/current?string={0}".format(self.identifier)
 
         self.query = {'ticket':self.AuthClient.getst()}
+
+        print(uri+content_endpoint)
 
         r = requests.get(uri+content_endpoint,params=self.query)
         #r = requests.get(uri + endpoint, params=self.query)

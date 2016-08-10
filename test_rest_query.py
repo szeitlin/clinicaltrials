@@ -23,7 +23,7 @@ class TestAuthentication(unittest.TestCase):
         self.base.st = self.base.getst()
         self.assertTrue(isinstance(self.base.st, str))
 
-    @unittest.skip("not sure why this times out, the url gives correct result if I paste it into the browser")
+    @unittest.skip("still not sure why this times out, the url gives correct result if I paste it into the browser")
     def test_validate_service_ticket(self):
         self.base.st = self.base.getst() #not sure if this will replace it automatically?
         uri = "http://utslogin.nlm.nih.gov"
@@ -32,14 +32,14 @@ class TestAuthentication(unittest.TestCase):
         h = {"Content-type": "application/x-www-form-urlencoded",
              "Accept": "text/plain", "User-Agent":"python"}
         print(uri+endpoint)
-        r = requests.post(uri+endpoint, data=params, headers=h)
+        r = requests.get(uri+endpoint, data=params, headers=h)
         print(r)
         self.assertEqual(r.text, "valid") #expect this to fail but do expect some output
 
 class TestRestQueryCLI(unittest.TestCase):
 
     def setUp(cls):
-        argv = '-i idiopathic -s MEDLINEPLUS'.split()
+        argv = '-i idiopathic -s MSH -r concept'.split()
         cls.cli = CLI(argv)
 
     def test_argument_parsing(self):
