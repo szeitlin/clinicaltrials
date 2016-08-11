@@ -1,5 +1,8 @@
+.apikey
+.idea/
 .txt
 .ipynb_checkpoints/
+.pptx
 .docx
 .numbers
 .pdf
