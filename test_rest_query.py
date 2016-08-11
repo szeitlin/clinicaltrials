@@ -23,23 +23,20 @@ class TestAuthentication(unittest.TestCase):
         self.base.st = self.base.getst()
         self.assertTrue(isinstance(self.base.st, str))
 
-    @unittest.skip("still not sure why this times out, the url gives correct result if I paste it into the browser")
     def test_validate_service_ticket(self):
-        self.base.st = self.base.getst() #not sure if this will replace it automatically?
-        uri = "http://utslogin.nlm.nih.gov"
+        self.base.st = self.base.getst()
+        uri = "https://utslogin.nlm.nih.gov" #this has to be https!
         endpoint = "/cas/serviceValidate?ticket={}&service={}".format(self.base.st, self.base.service)
         params = {'apikey': self.base.apikey}
         h = {"Content-type": "application/x-www-form-urlencoded",
              "Accept": "text/plain", "User-Agent":"python"}
-        print(uri+endpoint)
         r = requests.get(uri+endpoint, data=params, headers=h)
-        print(r)
-        self.assertEqual(r.text, "valid") #expect this to fail but do expect some output
+        self.assertEqual(r.status_code, 200)
 
 class TestRestQueryCLI(unittest.TestCase):
 
     def setUp(cls):
-        argv = '-i idiopathic -s MSH -r concept'.split()
+        argv = '-i idiopathic -s MSH'.split()
         cls.cli = CLI(argv)
 
     def test_argument_parsing(self):
@@ -60,9 +57,9 @@ class TestRestQueryCLI(unittest.TestCase):
     def test_query_result(self):
         self.cli.cli_authenticate()
         self.assertEqual(self.cli.AuthClient.service, "http://umlsks.nlm.nih.gov")
-        self.cli.jsonData = self.cli.get_query_result()
+        self.cli.get_query_result()
         self.assertTrue(isinstance(self.cli.query['ticket'], str))
-        self.assertTrue(isinstance(self.cli.jsonData, str))
+        self.assertTrue(isinstance(self.cli.jsonData, dict))
 
 if __name__=='__main__':
     unittest.main()

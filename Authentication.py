@@ -61,7 +61,7 @@ class Authentication:
         h = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain", "User-Agent":"python"}
         r = requests.post(self.tgt, data=params, headers=h)
 
-        print(r.text)
+        #print(r.text)
 
         return r.text
 

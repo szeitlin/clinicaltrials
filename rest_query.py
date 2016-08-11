@@ -67,6 +67,11 @@ class CLI:
         #     content_endpoint = "/rest/content/"+str(self.version)+"/CUI/"+str(self.identifier)
 
     def get_query_result(self):
+        """
+        Search by human-readable string.
+
+        :return: concepts
+        """
 
         self.construct_query()
 
@@ -80,12 +85,15 @@ class CLI:
 
         print(uri+content_endpoint)
 
-        r = requests.get(uri+content_endpoint,params=self.query)
+        r = requests.get(uri+content_endpoint, params=self.query)
         #r = requests.get(uri + endpoint, params=self.query)
-        print(r.text)
+        print(r.status_code)
+        #print(r.text)
 
         items = json.loads(r.text)
         self.jsonData = items["result"]
+
+        print(self.jsonData)
 
         ##uncomment the print statment if you want the raw json output, or you can just look at the documentation :=)
         #https://documentation.uts.nlm.nih.gov/rest/concept/index.html#sample-output
