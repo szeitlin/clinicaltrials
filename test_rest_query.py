@@ -2,7 +2,7 @@ __author__ = 'szeitlin'
 
 import unittest
 from Authentication import Authentication
-from rest_query import CLI
+from rest_query import CLI, DirectQuery
 from argparse import Namespace
 import requests
 import pandas as pd
@@ -68,6 +68,13 @@ class TestRestQueryCLI(unittest.TestCase):
         df = self.cli.parse_query_result()
         self.assertTrue(isinstance(df, pd.DataFrame))
         self.assertEqual(df.columns, ['name', 'ui'])
+
+class TestDirectQuery(unittest.TestCase):
+
+    def test_direct_query(self):
+        dq = DirectQuery("breast")
+        self.assertTrue(isinstance(dq.df, pd.DataFrame))
+        self.assertEqual(list(dq.df.columns), ['name', 'ui'])
 
 if __name__=='__main__':
     unittest.main()
