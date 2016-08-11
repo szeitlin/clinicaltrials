@@ -5,6 +5,7 @@ from Authentication import Authentication
 from rest_query import CLI
 from argparse import Namespace
 import requests
+import pandas as pd
 
 class TestAuthentication(unittest.TestCase):
 
@@ -60,6 +61,13 @@ class TestRestQueryCLI(unittest.TestCase):
         self.cli.get_query_result()
         self.assertTrue(isinstance(self.cli.query['ticket'], str))
         self.assertTrue(isinstance(self.cli.jsonData, dict))
+
+    def parse_query_result(self):
+        self.cli.cli_authenticate()
+        self.cli.get_query_result()
+        df = self.cli.parse_query_result()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(df.columns, ['name', 'ui'])
 
 if __name__=='__main__':
     unittest.main()

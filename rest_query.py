@@ -12,6 +12,7 @@ import requests
 import json
 import argparse
 import os
+import pandas as pd
 
 class CLI:
 
@@ -100,61 +101,18 @@ class CLI:
         #https://documentation.uts.nlm.nih.gov/rest/source-asserted-identifiers/index.html#sample-output
         #print (json.dumps(items, indent = 4))
 
-    # def parse_query_result(self):
-    #
-    #     jsonData = self.jsonData
-    #
-    #     classType = jsonData["classType"]
-    #     name = jsonData["name"]
-    #     ui = jsonData["ui"]
-    #     AtomCount = jsonData["atomCount"]
-    #     Definitions = jsonData["definitions"]
-    #     Atoms = jsonData["atoms"]
-    #     DefaultPreferredAtom = jsonData["defaultPreferredAtom"]
-    #
-    #     ## print out the shared data elements that are common to both the 'Concept' and 'SourceAtomCluster' class
-    #     print("classType: " + classType)
-    #     print("ui: " + ui)
-    #     print("Name: " + name)
-    #     print("AtomCount: " + str(AtomCount))
-    #     print("Atoms: " + Atoms)
-    #     print("Default Preferred Atom: " + DefaultPreferredAtom)
-    #
-    #     ## These data elements may or may not exist depending on what class ('Concept' or 'SourceAtomCluster') you're dealing with so we check for each one.
-    #     try:
-    #        print ("definitions: " + jsonData["definitions"])
-    #     except:
-    #           pass
-    #
-    #     try:
-    #        print ("parents: " + jsonData["parents"])
-    #     except:
-    #           pass
-    #
-    #     try:
-    #        print ("children: " + jsonData["children"])
-    #     except:
-    #           pass
-    #
-    #     try:
-    #        print ("relations: " + jsonData["relations"])
-    #     except:
-    #           pass
-    #
-    #     try:
-    #        print ("descendants: " + jsonData["descendants"])
-    #     except:
-    #           pass
-    #
-    #     try:
-    #        print("Semantic Types:")
-    #        for stys in jsonData["semanticTypes"]:
-    #            print("uri: "+ stys["uri"])
-    #            print("name: "+ stys["name"])
-    #
-    #     except:
-    #           pass
+    def parse_query_result(self):
+        """
+        Extract name and unique id from results.
 
+        :return: pandas dataframe
+        """
+        results = self.jsonData['results']
+
+        df = pd.DataFrame(results)
+        df.drop(['rootSource', 'uri'], axis=1, inplace=True)
+
+        return df
 
 if __name__=='__main__':
     cli = CLI()
