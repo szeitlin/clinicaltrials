@@ -4,6 +4,7 @@ import pandas as pd
 import unittest
 from stempool import StemPool
 
+@unittest.skip("deprecated in favor of DQ protocol")
 class TestCLIStemPool(unittest.TestCase):
 
     def setUp(cls):
@@ -25,6 +26,13 @@ class TestDQStemPool(unittest.TestCase):
     def setUp(cls):
         cls.pool = StemPool("breast")
 
-        
+    def test_df_exists(self):
+        self.assertTrue(isinstance(self.pool.df, pd.DataFrame))
+        self.assertEqual(list(self.pool.df.columns), ['name', 'ui'])
+
+    def test_fill_stempool(self):
+        self.pool.fill_stempool(self.pool.df)
+        self.assertIn('breast', self.pool.stemcounts)
+
 if __name__=='__main__':
     unittest.main()

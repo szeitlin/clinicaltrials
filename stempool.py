@@ -10,32 +10,10 @@ from nlp_helpers import apply_word_tokenize
 
 class StemPool:
 
-    def __init__(self, argv=None, term=None):
-        if argv is not None:
-            self.cli = CLI(argv)
-        elif term is not None:
-            self.dq = DirectQuery(term)
-        else:
-            print("missing input!")
-
+    def __init__(self, term=None):
+        self.dq = DirectQuery(term)
         self.stemmer = SnowballStemmer('english')
-
-    def get_query_term(self):
-        """
-        Helper method to run query and parse results.
-
-        :return: pandas dataframe with name and unique id
-
-        """
-        if self.cli is not None:
-            self.cli.cli_authenticate()
-            self.cli.get_query_result()
-            df = self.cli.parse_query_result()
-            return df
-        elif self.dq is not None:
-            return self.dq.df
-        else:
-            print("missing initialization!") #should switch these to logs
+        self.df = self.dq.df
 
     def fill_stempool(self, df):
         """
