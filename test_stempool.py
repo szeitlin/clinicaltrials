@@ -4,7 +4,7 @@ import pandas as pd
 import unittest
 from stempool import StemPool
 
-class TestStemPool(unittest.TestCase):
+class TestCLIStemPool(unittest.TestCase):
 
     def setUp(cls):
         argv = "-i lymphoma -s MSH".split()
@@ -20,5 +20,11 @@ class TestStemPool(unittest.TestCase):
         self.pool.fill_stempool(df)
         self.assertIn('lymphoma', self.pool.stemcounts)
 
+class TestDQStemPool(unittest.TestCase):
+
+    def setUp(cls):
+        cls.pool = StemPool("breast")
+
+        
 if __name__=='__main__':
     unittest.main()

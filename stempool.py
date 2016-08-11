@@ -5,16 +5,19 @@ import itertools
 from collections import Counter
 
 from nltk.stem.snowball import SnowballStemmer
-from rest_query import CLI
+from rest_query import CLI, DirectQuery
 from nlp_helpers import apply_word_tokenize
 
 class StemPool:
 
-    def __init__(self, argv=None):
+    def __init__(self, argv=None, term=None):
         if argv is not None:
             self.cli = CLI(argv)
+        elif term is not None:
+            self.dq = DirectQuery(term)
         else:
-            print("TBD: refactor")
+            print("missing input!")
+
         self.stemmer = SnowballStemmer('english')
 
     def get_query_term(self):
@@ -29,8 +32,10 @@ class StemPool:
             self.cli.get_query_result()
             df = self.cli.parse_query_result()
             return df
+        elif self.dq is not None:
+            return self.dq.df
         else:
-            print("TBD: refactor")
+            print("missing initialization!") #should switch these to logs
 
     def fill_stempool(self, df):
         """

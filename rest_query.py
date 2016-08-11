@@ -17,6 +17,7 @@ import pandas as pd
 class CLI:
     """
     Command-line interface for querying single terms.
+    More flexible, keeping around for potential future use/historical reasons.
     """
 
     def __init__(self, argv=None):
