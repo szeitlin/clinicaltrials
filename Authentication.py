@@ -14,12 +14,12 @@ uri="https://utslogin.nlm.nih.gov"
 #option 2 - api key authentication at /cas/v1/api-key
 auth_endpoint = "/cas/v1/api-key"
 
-#to save apikey locally, do `export APIKEY="apikeytexthere"`
+#to save apikey locally, do `export UMLS_APIKEY="apikeytexthere"`
 
 class Authentication:
 
     def __init__(self):
-        self.apikey=os.environ.get("APIKEY")
+        self.apikey=os.environ.get("UMLS_APIKEY")
         self.service="http://umlsks.nlm.nih.gov"
         self.gettgt()
 

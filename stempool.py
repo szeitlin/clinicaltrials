@@ -29,29 +29,13 @@ class StemPool:
         flat = list(flatten1(tokens))
 
         stems = [self.stemmer.stem(x) for x in flat]
-        #self.stemcounts = Counter(stems) #do we care about counts?
-        return set(stems)
 
-    # def inventory_check(self, term):
-    #     """
-    #     Check whether a new term is already in the stempool.
-    #     If not, add it.
-    #
-    #     note to self: may want to vectorize this later
-    #
-    #     :return: updated stemcounts
-    #     """
-    #     if self.stemcounts.get(term) is not None:
-    #         self.stemcounts[term] +=1
-    #     else:
-    #         self.stemcounts.update(term)
+        return set(stems)
 
 
 def stemset_combiner(stempool1, stempool2):
     """
     Merge stempools from two sets of terms.
-
-    question: do we care about counts right now? Maybe not.
 
     :param stempool1: (set of str)
     :param stempool2: (set of str)
