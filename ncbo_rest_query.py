@@ -45,7 +45,7 @@ def get_search_terms_from_file(filename):
 
 def get_queries(terms):
     """
-    Actually runs the queries
+    Run multiple queries and collect all the results
 
     :param terms: list of search terms
     :return: list of json objects
@@ -55,6 +55,31 @@ def get_queries(terms):
         search_results.append(make_request(term)["collection"])
 
     return search_results
+
+def parse_results(rdict):
+    """
+    Just do one term at a time to start with.
+
+    :param rdict: dict from requests response object
+    :return:
+    """
+    collected = rdict['collection']
+
+    labels, synonyms = [], []
+
+    for item in collected:
+        try:
+            label = item['prefLabel']
+            if label not in labels:
+                labels.append(label)
+
+            synonym = item['synonym']
+            if synonym not in synonyms:
+                synonyms.append(synonym)
+        except KeyError:
+            continue
+
+    return labels, synonyms
 
 def print_results(search_results):
     """

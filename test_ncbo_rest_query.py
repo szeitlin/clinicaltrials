@@ -18,11 +18,11 @@ class TestNCBOQuery(unittest.TestCase):
         self.assertTrue(isinstance(empty_query.json(), dict))
 
     def test_with_authorization(self):
-        empty_query = make_request("Marrow depression")
+        empty_query = make_request("depression")
         self.assertTrue(isinstance(empty_query, dict))
 
     def test_search(self):
-        query = get_queries(['Marrow depression'])
+        query = get_queries(['Marrow'])
         self.assertTrue(isinstance(query, list))
 
 if __name__=='__main__':
